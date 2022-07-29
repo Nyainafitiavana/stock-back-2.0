@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Roles } from './roles.interface';
 
 export interface User {
@@ -10,4 +9,3 @@ export interface User {
   adresse: string;
   role?: Roles;
 }
-

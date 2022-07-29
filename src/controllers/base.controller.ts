@@ -1,3 +1,4 @@
+import { paramsData } from '@/interfaces/paramsData.interface';
 import { ApiResponse } from '@/interfaces/response.interface';
 
 class BaseController {
@@ -14,6 +15,18 @@ class BaseController {
     };
 
     return response;
+  }
+
+  protected argsResponse(args: string, totalRows: number): paramsData {
+    let message = '';
+    if (totalRows > 0) {
+      message = 'Get ' + args + ' success';
+    } else {
+      message = 'Not ' + args + ' found';
+    }
+    const paramsResponse: paramsData = { message };
+
+    return paramsResponse;
   }
 }
 

@@ -2,29 +2,26 @@ import { NextFunction, Request, Response } from 'express';
 import { Produit } from '@interfaces/produits.interface';
 import produitService from '@services/produits.service';
 import { CreateProduitDto } from '@/dtos/produits.dto';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class ProduitController {
+class ProduitController extends BaseController {
   public produitService = new produitService();
 
   public getAllProduit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const request = req.query;
       const page = +request.page;
-      const take = +request.limite;
+      const take = +request.limit;
       const skip = take * (page - 1);
 
       const findAllProduitsDataNoLimit: Produit[] = await this.produitService.findAllProduit(null, null);
-      const totalRows = findAllProduitsDataNoLimit.length;
+      const totalRows: number = findAllProduitsDataNoLimit.length;
       const findAllProduitsData: Produit[] = await this.produitService.findAllProduit(take, skip);
-      const data: any = {
-        status: 200,
-        totalRows: totalRows,
-        limite: take,
-        page: page,
-        rows: findAllProduitsData,
-      };
+      const message: any = this.argsResponse('products', totalRows).message;
 
-      res.status(200).json({ data, message: 'findAll' });
+      const data: ApiResponse = this.response(true, message, findAllProduitsData, totalRows, take, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
