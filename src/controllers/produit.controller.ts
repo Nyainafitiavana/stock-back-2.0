@@ -18,7 +18,7 @@ class ProduitController extends BaseController {
       const findAllProduitsDataNoLimit: Produit[] = await this.produitService.findAllProduit(null, null);
       const totalRows: number = findAllProduitsDataNoLimit.length;
       const findAllProduitsData: Produit[] = await this.produitService.findAllProduit(take, skip);
-      const message: any = this.argsResponse('products', totalRows).message;
+      const message = this.argsResponse('products', totalRows).message;
 
       const data: ApiResponse = this.response(true, message, findAllProduitsData, totalRows, take, page);
       res.json(data);

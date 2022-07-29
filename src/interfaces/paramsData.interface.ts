@@ -1,3 +1,3 @@
-export interface paramsData {
+export interface messageData {
   message: string;
 }
