@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateProduitDto } from '@dtos/produits.dto';
 import { ProduitEntity } from '@entities/produits.entity';
@@ -11,44 +10,39 @@ import { StockEntity } from '@/entities/stock.entity';
 @EntityRepository()
 class ProduitService extends Repository<ProduitEntity> {
   public async findAllProduit(Take: number, Skip: number): Promise<Produit[]> {
-    const prods: Produit[] = await ProduitEntity.find({ relations: ['category'], order:{'id':'ASC'}, take: Take, skip: Skip });
+    const prods: Produit[] = await ProduitEntity.find({ relations: ['category'], order: { id: 'ASC' }, take: Take, skip: Skip });
     return prods;
   }
 
   public async findProduitById(produitId: number): Promise<Produit[]> {
     if (isEmpty(produitId)) throw new HttpException(400, "You're not produitId");
 
-    const findProduit: Produit[] = await ProduitEntity.find({ where: { id: produitId }, relations: ['category'], take:1 });
+    const findProduit: Produit[] = await ProduitEntity.find({ where: { id: produitId }, relations: ['category'], take: 1 });
     if (!findProduit) throw new HttpException(409, "You're not produit");
 
     return findProduit;
   }
 
-  public async createProduit(produitData: CreateProduitDto): Promise<Stock> {
+  public async createProduit(produitData: CreateProduitDto): Promise<Produit> {
     if (isEmpty(produitData)) throw new HttpException(400, "You're not produit");
     try {
       const produitResponse: Produit = await ProduitEntity.create({ ...produitData }).save();
       const objectInsert: Stock = {
-        // id: 1,
         quantite: 0,
-        produit: produitResponse
+        produit: produitResponse,
       };
-      const stockResponse: Stock = await StockEntity.create({ ...objectInsert }).save();
-      return stockResponse;
+      await StockEntity.create({ ...objectInsert }).save();
+      return produitResponse;
     } catch (e) {
-      throw (e)
+      throw e;
     }
-
-
-
   }
 
   public async updateProduit(produitId: number, produitData: CreateProduitDto): Promise<Produit> {
-    if (isEmpty(produitData)) throw new HttpException(400, "produitId not found");
+    if (isEmpty(produitData)) throw new HttpException(400, 'produitId not found');
 
     const findUser: Produit = await ProduitEntity.findOne({ where: { id: produitId } });
-    if (!findUser) throw new HttpException(409, "produit not found");
-
+    if (!findUser) throw new HttpException(409, 'produit not found');
 
     await ProduitEntity.update(produitId, { ...produitData });
 
@@ -56,20 +50,18 @@ class ProduitService extends Repository<ProduitEntity> {
     return updateProduit;
   }
 
-
   public async deleteProduit(produitId: number): Promise<Produit> {
     //console.log(produitId);
-    if (isEmpty(produitId)) throw new HttpException(400, "produitId not found");
+    if (isEmpty(produitId)) throw new HttpException(400, 'produitId not found');
 
     const findProduit: Produit = await ProduitEntity.findOne({ where: { id: produitId } });
     console.log(findProduit);
-    
-    if (!findProduit) throw new HttpException(409, "produitId not found");
+
+    if (!findProduit) throw new HttpException(409, 'produitId not found');
 
     await ProduitEntity.delete({ id: produitId });
     return findProduit;
   }
-
 }
 
 export default ProduitService;

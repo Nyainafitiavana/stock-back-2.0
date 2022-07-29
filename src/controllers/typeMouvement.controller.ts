@@ -1,9 +1,7 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import { TypeMouvement } from '@/interfaces/typeMouvement.interface';
 import TypeMouvementService from '../services/typeMouvement.service';
 import { TypeMouvementDto } from '../dtos/typeMouvement.dto';
-
 
 class TypeMouvementController {
   public typeMouvementService = new TypeMouvementService();
@@ -15,14 +13,14 @@ class TypeMouvementController {
       const page: number = +query.page;
       const offset: number = limit * (page - 1);
       const findAllType: TypeMouvement[] = await this.typeMouvementService.findAllType(limit, offset);
-      
+
       const rows = {
         data: findAllType,
         status: 200,
         totalRows: findAllType.length,
         limit: limit,
-        page: page
-      }
+        page: page,
+      };
 
       res.status(200).json({ rows, message: 'get all typeMouvement success' });
     } catch (error) {
@@ -53,7 +51,6 @@ class TypeMouvementController {
     }
   };
 
-  
   public findTypeMouvementById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const typeMouvementId = Number(req.params.id);
@@ -64,15 +61,14 @@ class TypeMouvementController {
         status: 200,
         totalRows: findMouvementByIdData.length,
         limit: null,
-        page: null
-      }
+        page: null,
+      };
 
       res.status(200).json({ rows, message: 'findTypeMouvement data success' });
     } catch (error) {
       next(error);
     }
   };
-
 
   public deleteTypeMouvement = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -85,9 +81,6 @@ class TypeMouvementController {
       next(error);
     }
   };
-  
-
-  
 }
 
 export default TypeMouvementController;

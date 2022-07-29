@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import { Category } from '@interfaces/category.interface';
 import categoryService from '@services/category.service';
@@ -21,8 +20,8 @@ class CategoryController {
         totalRows: findAllCategorys.length,
         limit: limit,
         page: page,
-        rows: findAllCategorysData, 
-      }
+        rows: findAllCategorysData,
+      };
 
       res.status(200).json({ data, message: 'get all category success' });
     } catch (error) {
@@ -53,7 +52,6 @@ class CategoryController {
     }
   };
 
-  
   public findCategoryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const CategoryId = Number(req.params.id);
@@ -63,14 +61,13 @@ class CategoryController {
         totalRows: findCategoryByIdData.length,
         limit: null,
         page: 1,
-        rows: findCategoryByIdData
-      }
+        rows: findCategoryByIdData,
+      };
       res.status(200).json({ data, message: 'findCategory data success' });
     } catch (error) {
       next(error);
     }
   };
-
 
   public deleteCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -83,9 +80,6 @@ class CategoryController {
       next(error);
     }
   };
-  
-
-  
 }
 
 export default CategoryController;

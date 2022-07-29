@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserDto, CreateLoginDto } from '@dtos/users.dto';
 import { RequestWithUser } from '@interfaces/auth.interface';
@@ -15,19 +14,19 @@ class AuthController {
 
   public signUp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const findRole: Roles = await RoleEntity.findOne({where: { designation: 'CLIENT' }});
+      const findRole: Roles = await RoleEntity.findOne({ where: { designation: 'CLIENT' } });
       const objectUser: any = {
         email: req.body.email,
         password: req.body.password,
         userName: req.body.userName,
         telephone: req.body.telephone,
         adresse: req.body.adresse,
-        role: findRole
-      }
+        role: findRole,
+      };
 
       const userData: CreateUserSignUpDto = objectUser;
       console.log(userData);
-      
+
       const signUpUserData: User = await this.authService.signup(userData);
 
       res.status(201).json({ data: signUpUserData, message: 'signup' });

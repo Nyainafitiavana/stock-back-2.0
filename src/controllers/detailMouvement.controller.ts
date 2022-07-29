@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import MouvementService from '../services/mouvement.service';
 import { DetailMouvement } from '../interfaces/detailMouvement.interface';
@@ -6,9 +5,9 @@ import ProduitService from '@/services/produits.service';
 import DetailmouvementService from '../services/detailMouvement.service';
 
 class DetailMouvementController {
-    public mouvementService = new MouvementService();
-    public produitService = new ProduitService();
-    public detaiService = new DetailmouvementService();
+  public mouvementService = new MouvementService();
+  public produitService = new ProduitService();
+  public detaiService = new DetailmouvementService();
 
   public getAllDetail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -24,8 +23,8 @@ class DetailMouvementController {
         status: 200,
         totalRows: findAllDetailMouvements.length,
         limit: limit,
-        page: page
-      }
+        page: page,
+      };
 
       res.status(200).json({ rows, message: 'findAll detail mouvement' });
     } catch (error) {
@@ -35,7 +34,7 @@ class DetailMouvementController {
 
   public getDetailById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const id:number = +req.params.id;
+      const id: number = +req.params.id;
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findByIdDetail(id);
 
       const data = {
@@ -44,19 +43,16 @@ class DetailMouvementController {
         limit: null,
         page: 1,
         rows: findAllDetailMouvementsData,
-      }
+      };
 
       res.status(200).json({ data, message: 'findAll detail mouvement' });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
- 
-  
   public getQuantityProductByDay = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findQuantityProductByDay();
 
       res.status(200).json({ data: findAllDetailMouvementsData, message: 'findAll detail mouvement' });
@@ -64,7 +60,6 @@ class DetailMouvementController {
       next(error);
     }
   };
-
 }
 
 export default DetailMouvementController;

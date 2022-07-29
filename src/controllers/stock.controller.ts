@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import StockService from '../services/stock.service';
 import { Stock } from '@/interfaces/stock.interface';
@@ -8,7 +7,7 @@ import { seuilSecurity } from '@/interfaces/seuilSecurity.interface';
 
 class StockController {
   public stockService = new StockService();
-  public seuilSecurityService = new SeuilSecurityService
+  public seuilSecurityService = new SeuilSecurityService();
   public getAllStock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const limit: number = +req.query.limit;
@@ -22,7 +21,7 @@ class StockController {
         limit: limit,
         page: page,
         rows: findAllStockData,
-      }
+      };
 
       res.status(200).json({ data, message: 'findAll' });
     } catch (error) {
@@ -52,7 +51,7 @@ class StockController {
         limit: null,
         page: 1,
         rows: findStock,
-      }
+      };
 
       res.status(200).json({ data, message: 'findStock data success' });
     } catch (error) {

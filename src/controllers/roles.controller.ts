@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import { Roles } from '@interfaces/roles.interface';
 import RolesService from '@services/roles.service';
@@ -22,7 +21,7 @@ class RolesController {
         limit: limit,
         page: page,
         rows: findAllRolesData,
-      }
+      };
 
       res.status(200).json({ data, message: 'get all roles success' });
     } catch (error) {
@@ -53,7 +52,6 @@ class RolesController {
     }
   };
 
-  
   public findRoleById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const RoleId = Number(req.params.id);
@@ -64,13 +62,12 @@ class RolesController {
         limit: null,
         page: 1,
         rows: findRoleByIdData,
-      }
+      };
       res.status(200).json({ data, message: 'findRole data success' });
     } catch (error) {
       next(error);
     }
   };
-
 
   public deleteRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -82,9 +79,6 @@ class RolesController {
       next(error);
     }
   };
-  
-
-  
 }
 
 export default RolesController;

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { seuilSecurity } from '@/interfaces/seuilSecurity.interface';
 import SeuilSecurityService from '@/services/seuilSecurity.service';
 import { NextFunction, Request, Response } from 'express';

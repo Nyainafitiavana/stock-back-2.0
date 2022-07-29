@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NextFunction, Request, Response } from 'express';
 import { Produit } from '@interfaces/produits.interface';
 import produitService from '@services/produits.service';
@@ -12,21 +11,20 @@ class ProduitController {
       const request = req.query;
       const page = +request.page;
       const take = +request.limite;
-      const skip = take * (page - 1)
+      const skip = take * (page - 1);
 
       const findAllProduitsDataNoLimit: Produit[] = await this.produitService.findAllProduit(null, null);
       const totalRows = findAllProduitsDataNoLimit.length;
       const findAllProduitsData: Produit[] = await this.produitService.findAllProduit(take, skip);
       const data: any = {
-          status: 200,
-          totalRows: totalRows,
-          limite: take,
-          page: page,
-          rows: findAllProduitsData,
+        status: 200,
+        totalRows: totalRows,
+        limite: take,
+        page: page,
+        rows: findAllProduitsData,
       };
 
-      res.status(200).json({data, message: 'findAll' });
-
+      res.status(200).json({ data, message: 'findAll' });
     } catch (error) {
       next(error);
     }
@@ -35,7 +33,7 @@ class ProduitController {
   public getProduit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const ProduitId = Number(req.params.id);
-      const findProduct: Produit[]= await this.produitService.findProduitById(ProduitId);
+      const findProduct: Produit[] = await this.produitService.findProduitById(ProduitId);
       const data: any = {
         status: 200,
         totalRows: findProduct.length,
@@ -43,7 +41,7 @@ class ProduitController {
         page: 1,
         rows: findProduct,
       };
-      
+
       res.status(200).json({ data, message: 'findCategory data success' });
     } catch (error) {
       next(error);
@@ -56,7 +54,6 @@ class ProduitController {
       const createProdData: Produit = await this.produitService.createProduit(produitData);
 
       res.status(201).json({ data: createProdData, message: 'created' });
-      
     } catch (error) {
       next(error);
     }
@@ -74,7 +71,6 @@ class ProduitController {
     }
   };
 
-
   public deleteProduit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const produitId = Number(req.params.id);
@@ -86,9 +82,6 @@ class ProduitController {
       next(error);
     }
   };
-  
-
-  
 }
 
 export default ProduitController;
