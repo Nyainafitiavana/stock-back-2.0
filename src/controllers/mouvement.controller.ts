@@ -15,8 +15,10 @@ import { Stock } from '@/interfaces/stock.interface';
 import StockService from '@/services/stock.service';
 import { StockEntity } from '@/entities/stock.entity';
 import { CreatestockDto } from '@/dtos/stock.dto';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class MouvementController {
+class MouvementController extends BaseController {
     public mouvementService = new MouvementService();
     public produitService = new ProduitService();
     public detaiService = new DetailmouvementService();
@@ -31,15 +33,11 @@ class MouvementController {
 
       const findAllMouvementsData: Mouvement[] = await this.mouvementService.findAllMouvement(limit, offset);
       const findAllMouvements: Mouvement[] = await this.mouvementService.findAllMouvement(null, null);
-      const data: any = {
-        status: 200,
-        totalRows: findAllMouvements.length,
-        limit: limit,
-        page: page,
-        rows: findAllMouvementsData
-      }
+      const totalRows: number = findAllMouvements.length;
+      const message = this.argsResponse('all Mouvement', totalRows).message;
 
-      res.status(200).json({ data, message: 'findAll mouvement' });
+      const data: ApiResponse = this.response(true, message, findAllMouvementsData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -49,14 +47,11 @@ class MouvementController {
     try {
       const mouvementId = Number(req.params.id);
       const findMouvement: Mouvement[] = await this.mouvementService.findMouvementById(mouvementId);
-      const data: any = {
-        status: 200,
-        totalRows: findMouvement.length,
-        limit: null,
-        page: 1,
-        rows: findMouvement
-      }
-      res.status(200).json({ data, message: 'findMouvement data success' });
+      const totalRows: number = findMouvement.length;
+      const message = this.argsResponse('one mouvement', totalRows).message;
+
+      const data: ApiResponse = this.response(true, message, findMouvement, totalRows, null, 1);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -184,21 +179,18 @@ class MouvementController {
 
   public getAllMouvementByDay = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const date: string = req.query.date as string;
-        const limit = +req.query.limit;
-        const page = +req.query.page;
-        const offset = limit * (page - 1);
+      const date: string = req.query.date as string;
+      const limit = +req.query.limit;
+      const page = +req.query.page;
+      const offset = limit * (page - 1);
 
-        const findMouvementData: Mouvement[] = await this.mouvementService.findMouvementByDay(date,limit,offset);
-        const data:any = {
-          rows: findMouvementData,
-          status: 200,
-          totalRows: findMouvementData.length,
-          limit: limit,
-          page: page
-        };
+      const findMouvementData: Mouvement[] = await this.mouvementService.findMouvementByDay(date,limit,offset);
+      const findMouvements: Mouvement[] = await this.mouvementService.findMouvementByDay(date,null,null);
+      const totalRows: number = findMouvements.length;
+      const message = this.argsResponse('all mouvement on '+date+'', totalRows).message;
 
-        res.status(200).json({ data, message: 'findAll detail mouvement' });
+      const data: ApiResponse = this.response(true, message, findMouvementData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }

@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { Category } from '@interfaces/category.interface';
 import categoryService from '@services/category.service';
 import { CreateCategoryDto } from '@/dtos/category.dto';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class CategoryController {
+class CategoryController extends BaseController {
   public categoryService = new categoryService();
 
   public getCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -14,16 +16,11 @@ class CategoryController {
       const offset: number = limit * (page - 1);
       const findAllCategorysData: Category[] = await this.categoryService.findAllCategory(limit, offset);
       const findAllCategorys: Category[] = await this.categoryService.findAllCategory(null, null);
+      const totalRows: number = findAllCategorys.length;
+      const message = this.argsResponse('all category', totalRows).message;
 
-      const data = {
-        status: 200,
-        totalRows: findAllCategorys.length,
-        limit: limit,
-        page: page,
-        rows: findAllCategorysData,
-      };
-
-      res.status(200).json({ data, message: 'get all category success' });
+      const data: ApiResponse = this.response(true, message, findAllCategorysData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -56,14 +53,11 @@ class CategoryController {
     try {
       const CategoryId = Number(req.params.id);
       const findCategoryByIdData: Category[] = await this.categoryService.findCategoryById(CategoryId);
-      const data: any = {
-        status: 200,
-        totalRows: findCategoryByIdData.length,
-        limit: null,
-        page: 1,
-        rows: findCategoryByIdData,
-      };
-      res.status(200).json({ data, message: 'findCategory data success' });
+      const totalRows: number = findCategoryByIdData.length;
+      const message = this.argsResponse('one category', totalRows).message;
+
+      const data: ApiResponse = this.response(true, message, findCategoryByIdData, totalRows, null, 1);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -72,7 +66,6 @@ class CategoryController {
   public deleteCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const categoryId = Number(req.params.id);
-      //console.log(produitId);
       const deleteCategoryData: Category = await this.categoryService.deleteCategory(categoryId);
 
       res.status(200).json({ data: deleteCategoryData, message: 'category deleted success' });

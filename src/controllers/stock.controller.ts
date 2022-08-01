@@ -4,8 +4,10 @@ import { Stock } from '@/interfaces/stock.interface';
 import { CreatestockDto } from '../dtos/stock.dto';
 import SeuilSecurityService from '@/services/seuilSecurity.service';
 import { seuilSecurity } from '@/interfaces/seuilSecurity.interface';
+import { ApiResponse } from '@/interfaces/response.interface';
+import BaseController from './base.controller';
 
-class StockController {
+class StockController extends BaseController {
   public stockService = new StockService();
   public seuilSecurityService = new SeuilSecurityService();
   public getAllStock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -15,15 +17,11 @@ class StockController {
       const offset: number = limit * (page - 1);
       const findAllStockData: Stock[] = await this.stockService.findAllStock(limit, offset);
       const findAllStock: Stock[] = await this.stockService.findAllStock(null, null);
-      const data = {
-        status: 200,
-        totalRows: findAllStock.length,
-        limit: limit,
-        page: page,
-        rows: findAllStockData,
-      };
+      const totalRows: number = findAllStock.length;
+      const message = this.argsResponse('all stocks', totalRows).message;
 
-      res.status(200).json({ data, message: 'findAll' });
+      const data: ApiResponse = this.response(true, message, findAllStockData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -40,20 +38,19 @@ class StockController {
     }
   };
 
-  public getSeuilStock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getStockRupture = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const limit: number = +req.query.limit;
+      const page: number = +req.query.page;
+      const offset: number = limit * (page - 1);
       const stockSeuil: seuilSecurity = await this.seuilSecurityService.findSeuilById();
-      const findStock: Stock[] = await this.stockService.findStockProduitSeuil(stockSeuil.seuil);
+      const findStock: Stock[] = await this.stockService.findStockProduitSeuil(stockSeuil.seuil, null, null);
+      const findStockData: Stock[] = await this.stockService.findStockProduitSeuil(stockSeuil.seuil, limit, offset);
+      const totalRows: number = findStock.length;
+      const message = this.argsResponse('all rupture stock', totalRows).message;
 
-      const data = {
-        status: 200,
-        totalRows: findStock.length,
-        limit: null,
-        page: 1,
-        rows: findStock,
-      };
-
-      res.status(200).json({ data, message: 'findStock data success' });
+      const data: ApiResponse = this.response(true, message, findStockData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }

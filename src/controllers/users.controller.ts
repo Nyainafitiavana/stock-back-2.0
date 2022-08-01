@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateUserDto } from '@dtos/users.dto';
 import { User } from '@interfaces/users.interface';
 import userService from '@services/users.service';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class UsersController {
+class UsersController extends BaseController {
   public userService = new userService();
 
   public getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -14,15 +16,11 @@ class UsersController {
       const offset: number = limit * (page - 1);
       const findAllUsersData: User[] = await this.userService.findAllUser(limit, offset);
       const findAllUsers: User[] = await this.userService.findAllUser(null, null);
+      const totalRows: number = findAllUsers.length;
+      const message = this.argsResponse('all users', totalRows).message;
 
-      const data: any = {
-        status: 200,
-        totalRows: findAllUsers.length,
-        limit: limit,
-        page: page,
-        rows: findAllUsersData,
-      };
-      res.status(200).json({ data, message: 'findAll' });
+      const data: ApiResponse = this.response(true, message, findAllUsersData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -31,8 +29,12 @@ class UsersController {
   public getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = Number(req.params.id);
-      const findOneUserData: User = await this.userService.findUserById(userId);
+      const findOneUserData: User[] = await this.userService.findUserById(userId);
+      const totalRows: number = findOneUserData.length;
+      const message = this.argsResponse('all rupture stock', totalRows).message;
 
+      const data: ApiResponse = this.response(true, message, findOneUserData, totalRows, null, 1);
+      res.json(data);
       res.status(200).json({ data: findOneUserData, message: 'findOne' });
     } catch (error) {
       next(error);

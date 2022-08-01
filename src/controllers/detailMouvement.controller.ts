@@ -3,8 +3,10 @@ import MouvementService from '../services/mouvement.service';
 import { DetailMouvement } from '../interfaces/detailMouvement.interface';
 import ProduitService from '@/services/produits.service';
 import DetailmouvementService from '../services/detailMouvement.service';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class DetailMouvementController {
+class DetailMouvementController extends BaseController {
   public mouvementService = new MouvementService();
   public produitService = new ProduitService();
   public detaiService = new DetailmouvementService();
@@ -18,15 +20,11 @@ class DetailMouvementController {
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findAllDetailMouvement(limit, offset);
       const findAllDetailMouvements: DetailMouvement[] = await this.detaiService.findAllDetailMouvement(null, null);
 
-      const rows = {
-        data: findAllDetailMouvementsData,
-        status: 200,
-        totalRows: findAllDetailMouvements.length,
-        limit: limit,
-        page: page,
-      };
+      const totalRows: number = findAllDetailMouvements.length;
+      const message = this.argsResponse('all details mouvements', totalRows).message;
 
-      res.status(200).json({ rows, message: 'findAll detail mouvement' });
+      const data: ApiResponse = this.response(true, message, findAllDetailMouvementsData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -37,15 +35,11 @@ class DetailMouvementController {
       const id: number = +req.params.id;
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findByIdDetail(id);
 
-      const data = {
-        status: 200,
-        totalRows: findAllDetailMouvementsData.length,
-        limit: null,
-        page: 1,
-        rows: findAllDetailMouvementsData,
-      };
+      const totalRows: number = findAllDetailMouvementsData.length;
+      const message = this.argsResponse('One Detail', totalRows).message;
 
-      res.status(200).json({ data, message: 'findAll detail mouvement' });
+      const data: ApiResponse = this.response(true, message, findAllDetailMouvementsData, totalRows, null, 1);
+      res.json(data);
     } catch (error) {
       next(error);
     }

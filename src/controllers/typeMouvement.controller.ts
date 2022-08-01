@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { TypeMouvement } from '@/interfaces/typeMouvement.interface';
 import TypeMouvementService from '../services/typeMouvement.service';
 import { TypeMouvementDto } from '../dtos/typeMouvement.dto';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class TypeMouvementController {
+class TypeMouvementController extends BaseController {
   public typeMouvementService = new TypeMouvementService();
 
   public getTypeMouvement = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -12,17 +14,14 @@ class TypeMouvementController {
       const limit: number = +query.limit;
       const page: number = +query.page;
       const offset: number = limit * (page - 1);
-      const findAllType: TypeMouvement[] = await this.typeMouvementService.findAllType(limit, offset);
+      const findAllType: TypeMouvement[] = await this.typeMouvementService.findAllType(null, null);
+      const findAllTypeData: TypeMouvement[] = await this.typeMouvementService.findAllType(limit, offset);
 
-      const rows = {
-        data: findAllType,
-        status: 200,
-        totalRows: findAllType.length,
-        limit: limit,
-        page: page,
-      };
+      const totalRows: number = findAllType.length;
+      const message = this.argsResponse('all type mouvement', totalRows).message;
 
-      res.status(200).json({ rows, message: 'get all typeMouvement success' });
+      const data: ApiResponse = this.response(true, message, findAllTypeData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -33,7 +32,7 @@ class TypeMouvementController {
       const typeMouvementData: TypeMouvementDto = req.body;
       const createmvtData: TypeMouvement = await this.typeMouvementService.createTypeMouvement(typeMouvementData);
 
-      res.status(201).json({ data: createmvtData, message: 'created typeMouvement success' });
+      res.status(201).json({ data: createmvtData, message: 'created type mouvement success' });
     } catch (error) {
       next(error);
     }
@@ -45,7 +44,7 @@ class TypeMouvementController {
       const typeMouvementData: TypeMouvementDto = req.body;
       const updateTypeMouvementData: TypeMouvement = await this.typeMouvementService.updateTypeMouvement(typeMouvementId, typeMouvementData);
 
-      res.status(200).json({ data: updateTypeMouvementData, message: 'typeMouvement updated success' });
+      res.status(200).json({ data: updateTypeMouvementData, message: 'type mouvement updated success' });
     } catch (error) {
       next(error);
     }
@@ -55,16 +54,11 @@ class TypeMouvementController {
     try {
       const typeMouvementId = Number(req.params.id);
       const findMouvementByIdData: TypeMouvement[] = await this.typeMouvementService.findTypeById(typeMouvementId);
+      const totalRows: number = findMouvementByIdData.length;
+      const message = this.argsResponse('one type mouvement', totalRows).message;
 
-      const rows = {
-        data: findMouvementByIdData,
-        status: 200,
-        totalRows: findMouvementByIdData.length,
-        limit: null,
-        page: null,
-      };
-
-      res.status(200).json({ rows, message: 'findTypeMouvement data success' });
+      const data: ApiResponse = this.response(true, message, findMouvementByIdData, totalRows, null, 1);
+      res.json(data);
     } catch (error) {
       next(error);
     }

@@ -55,7 +55,7 @@ class MouvementService extends Repository<MouvementEntity> {
     return findMouvement;
   }
 
-  public async findMouvementByDay(date :string, limit: number, offset: number): Promise<Mouvement[]> {
+  public async findMouvementByDay(date :string, limit?: number, offset?: number): Promise<Mouvement[]> {
     const value = "Vente";
     const findMouvementByDate: Mouvement[] = await MouvementEntity.createQueryBuilder('qb')                                                                  
                                                                    .where('qb.createdAt = :dateJour', {dateJour: date})

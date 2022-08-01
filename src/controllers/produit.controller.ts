@@ -31,15 +31,11 @@ class ProduitController extends BaseController {
     try {
       const ProduitId = Number(req.params.id);
       const findProduct: Produit[] = await this.produitService.findProduitById(ProduitId);
-      const data: any = {
-        status: 200,
-        totalRows: findProduct.length,
-        limite: null,
-        page: 1,
-        rows: findProduct,
-      };
+      const totalRows: number = findProduct.length;
+      const message = this.argsResponse('one product', totalRows).message;
 
-      res.status(200).json({ data, message: 'findCategory data success' });
+      const data: ApiResponse = this.response(true, message, findProduct, totalRows, null, 1);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -71,7 +67,6 @@ class ProduitController extends BaseController {
   public deleteProduit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const produitId = Number(req.params.id);
-      //console.log(produitId);
       const deleteProduitData: Produit = await this.produitService.deleteProduit(produitId);
 
       res.status(200).json({ data: deleteProduitData, message: 'deleted' });

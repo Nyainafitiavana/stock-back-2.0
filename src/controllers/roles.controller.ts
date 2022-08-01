@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import { Roles } from '@interfaces/roles.interface';
 import RolesService from '@services/roles.service';
 import { CreateRolesDto } from '@/dtos/roles.dto';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class RolesController {
+class RolesController extends BaseController {
   public roleService = new RolesService();
 
   public getRoles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -15,15 +17,11 @@ class RolesController {
       const findAllRolesData: Roles[] = await this.roleService.findAllRoles(limit, offset);
       const findAllRoles: Roles[] = await this.roleService.findAllRoles(null, null);
 
-      const data = {
-        status: 200,
-        totalRows: findAllRoles.length,
-        limit: limit,
-        page: page,
-        rows: findAllRolesData,
-      };
+      const totalRows: number = findAllRoles.length;
+      const message = this.argsResponse('all roles', totalRows).message;
 
-      res.status(200).json({ data, message: 'get all roles success' });
+      const data: ApiResponse = this.response(true, message, findAllRolesData, totalRows, limit, page);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -56,14 +54,11 @@ class RolesController {
     try {
       const RoleId = Number(req.params.id);
       const findRoleByIdData: Roles[] = await this.roleService.findRolesById(RoleId);
-      const data = {
-        status: 200,
-        totalRows: findRoleByIdData.length,
-        limit: null,
-        page: 1,
-        rows: findRoleByIdData,
-      };
-      res.status(200).json({ data, message: 'findRole data success' });
+      const totalRows: number = findRoleByIdData.length;
+      const message = this.argsResponse('one role', totalRows).message;
+
+      const data: ApiResponse = this.response(true, message, findRoleByIdData, totalRows, null, 1);
+      res.json(data);
     } catch (error) {
       next(error);
     }

@@ -22,11 +22,13 @@ class StockService extends Repository<StockEntity> {
     return findStock;
   }
   
-  public async findStockProduitSeuil(seuil: number): Promise<Stock[]> {
+  public async findStockProduitSeuil(seuil: number, limit?: number, offset?: number): Promise<Stock[]> {
     const getResult: Stock[] = await StockEntity.createQueryBuilder('stock')
                                                 .innerJoinAndSelect('stock.produit', 'produit'
                                                 )
                                                 .where('stock.quantite <= :sl', {sl: seuil})
+                                                .limit(limit)
+                                                .offset(offset)
                                                 .getMany();
     if (!getResult) throw new HttpException(409, "You're not stocks below the threshold");
 
