@@ -21,15 +21,16 @@ class DetailMouvementController extends BaseController {
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findAllDetailMouvement(limit, offset);
       const findAllDetailMouvements: DetailMouvement[] = await this.detaiService.findAllDetailMouvement(null, null);
 
-      const rows = {
-        data: findAllDetailMouvementsData,
-        status: 200,
-        totalRows: findAllDetailMouvements.length,
-        limit: limit,
-        page: page
-      }
+      const datas: ApiResponse = await this.response(
+        true, 
+        "Get All data success", 
+        findAllDetailMouvementsData,
+        findAllDetailMouvements.length,
+        limit,
+        page
+      );
 
-      res.status(200).json({ rows, message: 'findAll detail mouvement' });
+      res.status(200).json({ datas});
     } catch (error) {
       next(error);
     }
