@@ -4,8 +4,10 @@ import MouvementService from '../services/mouvement.service';
 import { DetailMouvement } from '../interfaces/detailMouvement.interface';
 import ProduitService from '@/services/produits.service';
 import DetailmouvementService from '../services/detailMouvement.service';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class DetailMouvementController {
+class DetailMouvementController extends BaseController {
     public mouvementService = new MouvementService();
     public produitService = new ProduitService();
     public detaiService = new DetailmouvementService();
@@ -19,15 +21,16 @@ class DetailMouvementController {
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findAllDetailMouvement(limit, offset);
       const findAllDetailMouvements: DetailMouvement[] = await this.detaiService.findAllDetailMouvement(null, null);
 
-      const rows = {
-        data: findAllDetailMouvementsData,
-        status: 200,
-        totalRows: findAllDetailMouvements.length,
-        limit: limit,
-        page: page
-      }
+      const datas: ApiResponse = await this.response(
+        true, 
+        "Get All data success", 
+        findAllDetailMouvementsData,
+        findAllDetailMouvements.length,
+        limit,
+        page
+      );
 
-      res.status(200).json({ rows, message: 'findAll detail mouvement' });
+      res.status(200).json({ datas});
     } catch (error) {
       next(error);
     }
@@ -38,15 +41,16 @@ class DetailMouvementController {
       const id:number = +req.params.id; //mouvement id
       const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findDetailByMouvementId(id);
 
-      const data = {
-        status: 200,
-        totalRows: findAllDetailMouvementsData.length,
-        limit: null,
-        page: 1,
-        rows: findAllDetailMouvementsData,
-      }
+      const data: ApiResponse = await this.response(
+        true, 
+        "Get All data success", 
+        findAllDetailMouvementsData,
+        findAllDetailMouvementsData.length,
+        null,
+        1
+      );
 
-      res.status(200).json({ data, message: 'findAll detail mouvement' });
+      res.status(200).json({ data});
     } catch (error) {
       next(error);
     }
