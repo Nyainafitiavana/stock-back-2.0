@@ -34,7 +34,7 @@ class MouvementController extends BaseController{
 
       const findAllMouvementsData: Mouvement[] = await this.mouvementService.findAllMouvement(limit, offset);
       const findAllMouvements: Mouvement[] = await this.mouvementService.findAllMouvement(null, null);
-      
+
       const datas: ApiResponse = await this.response(
         true, 
         "Get All data success", 
@@ -54,14 +54,18 @@ class MouvementController extends BaseController{
     try {
       const mouvementId = Number(req.params.id);
       const findMouvement: Mouvement[] = await this.mouvementService.findMouvementById(mouvementId);
-      const data: any = {
-        status: 200,
-        totalRows: findMouvement.length,
-        limit: null,
-        page: 1,
-        rows: findMouvement
-      }
-      res.status(200).json({ data, message: 'findMouvement data success' });
+
+      const datas: ApiResponse = await this.response(
+        true, 
+        "Get One mouvment success", 
+        findMouvement,
+        findMouvement.length,
+        null,
+        1
+      );
+
+      res.status(200).json({ datas});
+
     } catch (error) {
       next(error);
     }
