@@ -18,7 +18,8 @@ class DetailmouvementService extends Repository<DetailMouvementEntity> {
 
   public async findDetailByMouvementId(id: number): Promise<DetailMouvement[]> {
     const bonMouvement: Mouvement[] = await MouvementEntity.find({where: {id: id}});
-    const detaiMouvements: DetailMouvement[] = await DetailMouvementEntity.find({where: {mouvement: bonMouvement}, relations: ['mouvement', 'produit']});
+    
+    const detaiMouvements: DetailMouvement[] = await DetailMouvementEntity.find({where: {mouvement: bonMouvement[0].id}, relations: ['mouvement', 'produit']});
     return detaiMouvements;
   }
 
