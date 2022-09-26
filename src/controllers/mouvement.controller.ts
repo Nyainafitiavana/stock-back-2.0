@@ -16,8 +16,10 @@ import StockService from '@/services/stock.service';
 import { StockEntity } from '@/entities/stock.entity';
 import { CreatestockDto } from '@/dtos/stock.dto';
 import { Produit } from '@/interfaces/produits.interface';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class MouvementController {
+class MouvementController extends BaseController{
     public mouvementService = new MouvementService();
     public produitService = new ProduitService();
     public detaiService = new DetailmouvementService();
@@ -32,15 +34,17 @@ class MouvementController {
 
       const findAllMouvementsData: Mouvement[] = await this.mouvementService.findAllMouvement(limit, offset);
       const findAllMouvements: Mouvement[] = await this.mouvementService.findAllMouvement(null, null);
-      const data: any = {
-        status: 200,
-        totalRows: findAllMouvements.length,
-        limit: limit,
-        page: page,
-        rows: findAllMouvementsData
-      }
 
-      res.status(200).json({ data, message: 'findAll mouvement' });
+      const datas: ApiResponse = await this.response(
+        true, 
+        "Get All data success", 
+        findAllMouvementsData,
+        findAllMouvements.length,
+        limit,
+        page
+      );
+
+      res.status(200).json({ datas});
     } catch (error) {
       next(error);
     }
@@ -50,14 +54,18 @@ class MouvementController {
     try {
       const mouvementId = Number(req.params.id);
       const findMouvement: Mouvement[] = await this.mouvementService.findMouvementById(mouvementId);
-      const data: any = {
-        status: 200,
-        totalRows: findMouvement.length,
-        limit: null,
-        page: 1,
-        rows: findMouvement
-      }
-      res.status(200).json({ data, message: 'findMouvement data success' });
+
+      const datas: ApiResponse = await this.response(
+        true, 
+        "Get One mouvment success", 
+        findMouvement,
+        findMouvement.length,
+        null,
+        1
+      );
+
+      res.status(200).json({ datas});
+
     } catch (error) {
       next(error);
     }
