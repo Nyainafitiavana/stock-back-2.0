@@ -11,7 +11,7 @@ class ProduitController {
     try {
       const request = req.query;
       const page = +request.page;
-      const take = +request.limite;
+      const take = +request.limit;
       const skip = take * (page - 1)
 
       const findAllProduitsDataNoLimit: Produit[] = await this.produitService.findAllProduit(null, null);

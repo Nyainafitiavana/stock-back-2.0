@@ -10,7 +10,7 @@ import { isEmpty } from '@utils/util';
 class RolesService extends Repository<RoleEntity> {
   //find all roles
   public async findAllRoles(limit: number, offset: number): Promise<Roles[]> {
-    const roles: Roles[] = await RoleEntity.find({take: limit, skip: offset});
+    const roles: Roles[] = await RoleEntity.find({where: {}, take: limit, skip: offset});
     return roles;
   }
 

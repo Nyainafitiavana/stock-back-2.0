@@ -6,16 +6,19 @@ import { HttpException } from '../exceptions/HttpException';
 import { DetailMouvement } from '../interfaces/detailMouvement.interface';
 import { DetailMouvementEntity } from '../entities/detailMouvement.entity';
 import { CreateDetailMouvementDto } from '../dtos/detailMouvement.dto';
+import { Mouvement } from '@/interfaces/mouvement.interface';
+import { MouvementEntity } from '@/entities/mouvement.entity';
 
 @EntityRepository()
 class DetailmouvementService extends Repository<DetailMouvementEntity> {
   public async findAllDetailMouvement(limit:number, offset: number): Promise<DetailMouvement[]> {
-    const detaiMouvements: DetailMouvement[] = await DetailMouvementEntity.find({ relations: ['mouvement', 'produit'], skip: limit, take: offset });
+    const detaiMouvements: DetailMouvement[] = await DetailMouvementEntity.find({ relations: ['mouvement', 'produit'], take: limit, skip: offset });
     return detaiMouvements;
   }
 
-  public async findByIdDetail(id: number): Promise<DetailMouvement[]> {
-    const detaiMouvements: DetailMouvement[] = await DetailMouvementEntity.find({where: {id: id}, relations: ['mouvement', 'produit'], take:1});
+  public async findDetailByMouvementId(id: number): Promise<DetailMouvement[]> {
+    const bonMouvement: Mouvement[] = await MouvementEntity.find({where: {id: id}});
+    const detaiMouvements: DetailMouvement[] = await DetailMouvementEntity.find({where: {mouvement: bonMouvement}, relations: ['mouvement', 'produit']});
     return detaiMouvements;
   }
 

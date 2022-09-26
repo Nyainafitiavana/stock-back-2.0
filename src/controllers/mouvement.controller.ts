@@ -15,6 +15,7 @@ import { Stock } from '@/interfaces/stock.interface';
 import StockService from '@/services/stock.service';
 import { StockEntity } from '@/entities/stock.entity';
 import { CreatestockDto } from '@/dtos/stock.dto';
+import { Produit } from '@/interfaces/produits.interface';
 
 class MouvementController {
     public mouvementService = new MouvementService();
@@ -75,7 +76,7 @@ class MouvementController {
       const mounth = ("0" + (date.getMonth() + 1)).slice(-2);
       const year = date.getFullYear();
       const combiDate:string = ""+year+"-"+mounth+"-"+day;      
-      
+
       if (motif == "Vente") {
         const typeSortie: any = await TypeMouvementEntity.findOne({id: 2});
         const object: any = {
@@ -87,25 +88,26 @@ class MouvementController {
         };
         //create new object 
         const mouvementData: CreateMouvementDto = object;
+        
         const createmouvementData: Mouvement = await this.mouvementService.createMouvement(mouvementData);
         const detail: any = mouvementData.detailMouvement;
 
         detail.forEach(async element => {
           const qt: number = element.quantite;
-          const produit: any = await this.produitService.findProduitById(element.produit);
-          const prixTotal: number = (produit.prix) * qt;
-          const stock: Stock = await StockEntity.findOne({produit: produit});
+          const produit: Produit[] = await this.produitService.findProduitById(element.produit);
+          const prixTotal: number = (produit[0].prix) * qt;
+          const stock: Stock = await StockEntity.findOne({produit: produit[0]});
           //create new stock data
           const newStockData: CreatestockDto = {
             quantite: (stock.quantite) - qt,
-            produit: produit
+            produit: produit[0]
           }
           await this.stockService.updateStock(stock.id, newStockData);// set new quantite
           //created detailMouvementDto
           const detailM: CreateDetailMouvementDto = {
             mouvement: createmouvementData,
             quantite: qt,
-            produit: produit,
+            produit: produit[0],
             prixTotal: prixTotal
           }
 
@@ -127,23 +129,23 @@ class MouvementController {
         const mouvementData: CreateMouvementDto = object;
         const createmouvementData: Mouvement = await this.mouvementService.createMouvement(mouvementData);
         const detail: any = mouvementData.detailMouvement;
-
         detail.forEach(async element => {
           const qt: number = element.quantite;
-          const produit: any = await this.produitService.findProduitById(element.produit);
-          const prixTotal: number = (produit.prix) * qt;
-          const stock: Stock = await StockEntity.findOne({produit: produit});
+          const produit: Produit[] = await this.produitService.findProduitById(element.produit);
+          const prixTotal: number = (produit[0].prix) * qt;
+          const stock: Stock = await StockEntity.findOne({produit: produit[0]});
           //create new stock data
           const newStockData: CreatestockDto = {
             quantite: (stock.quantite) + qt,
-            produit: produit
+            produit: produit[0]
           }
+          
           await this.stockService.updateStock(stock.id, newStockData);// set new quantite
           //created detailMouvementDto
           const detailM: CreateDetailMouvementDto = {
             mouvement: createmouvementData,
             quantite: qt,
-            produit: produit,
+            produit: produit[0],
             prixTotal: prixTotal
           }
           

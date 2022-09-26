@@ -35,8 +35,8 @@ class DetailMouvementController {
 
   public getDetailById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const id:number = +req.params.id;
-      const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findByIdDetail(id);
+      const id:number = +req.params.id; //mouvement id
+      const findAllDetailMouvementsData: DetailMouvement[] = await this.detaiService.findDetailByMouvementId(id);
 
       const data = {
         status: 200,
