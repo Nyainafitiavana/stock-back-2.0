@@ -61,14 +61,16 @@ class CategoryController extends BaseController {
     try {
       const CategoryId = Number(req.params.id);
       const findCategoryByIdData: Category[] = await this.categoryService.findCategoryById(CategoryId);
-      const data: any = {
-        status: 200,
-        totalRows: findCategoryByIdData.length,
-        limit: null,
-        page: 1,
-        rows: findCategoryByIdData
-      }
-      res.status(200).json({ data, message: 'findCategory data success' });
+      const data: ApiResponse = await this.response(
+        true, 
+        "Get One category success", 
+        findCategoryByIdData,
+        findCategoryByIdData.length,
+        null,
+        1
+      );
+
+      res.status(200).json({ data});
     } catch (error) {
       next(error);
     }
