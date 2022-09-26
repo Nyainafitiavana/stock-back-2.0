@@ -3,8 +3,10 @@ import { NextFunction, Request, Response } from 'express';
 import { Category } from '@interfaces/category.interface';
 import categoryService from '@services/category.service';
 import { CreateCategoryDto } from '@/dtos/category.dto';
+import BaseController from './base.controller';
+import { ApiResponse } from '@/interfaces/response.interface';
 
-class CategoryController {
+class CategoryController extends BaseController {
   public categoryService = new categoryService();
 
   public getCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -16,15 +18,16 @@ class CategoryController {
       const findAllCategorysData: Category[] = await this.categoryService.findAllCategory(limit, offset);
       const findAllCategorys: Category[] = await this.categoryService.findAllCategory(null, null);
 
-      const data = {
-        status: 200,
-        totalRows: findAllCategorys.length,
-        limit: limit,
-        page: page,
-        rows: findAllCategorysData, 
-      }
+      const data: ApiResponse = await this.response(
+        true, 
+        "Get All data success", 
+        findAllCategorysData,
+        findAllCategorys.length,
+        limit,
+        page
+      );
 
-      res.status(200).json({ data, message: 'get all category success' });
+      res.status(200).json({ data});
     } catch (error) {
       next(error);
     }
@@ -58,14 +61,16 @@ class CategoryController {
     try {
       const CategoryId = Number(req.params.id);
       const findCategoryByIdData: Category[] = await this.categoryService.findCategoryById(CategoryId);
-      const data: any = {
-        status: 200,
-        totalRows: findCategoryByIdData.length,
-        limit: null,
-        page: 1,
-        rows: findCategoryByIdData
-      }
-      res.status(200).json({ data, message: 'findCategory data success' });
+      const data: ApiResponse = await this.response(
+        true, 
+        "Get One category success", 
+        findCategoryByIdData,
+        findCategoryByIdData.length,
+        null,
+        1
+      );
+
+      res.status(200).json({ data});
     } catch (error) {
       next(error);
     }

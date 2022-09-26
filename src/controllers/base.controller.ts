@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ApiResponse } from '@/interfaces/response.interface';
 import { json } from 'envalid';
 
@@ -9,14 +10,12 @@ class BaseController {
         totalRows?: number,
         limit?: number,
         page?: number,
-        emailNotFound?: boolean,
     ): ApiResponse {
 
 
         const response: ApiResponse = {
             success: success,
             message: message,
-            emailNotFound: emailNotFound,
             data: {
                 totalRows: totalRows,
                 limit: limit,
