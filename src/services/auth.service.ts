@@ -24,7 +24,7 @@ class AuthService extends Repository<UserEntity> {
     return createUserData;
   }
 
-  public async login(userData: CreateLoginDto): Promise<{ cookie: string; findUser: User }> {
+  public async login(userData: CreateLoginDto): Promise<{ cookie: string; findUser: User, tokenData: TokenData }> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
     const findUser: User = await UserEntity.findOne({ where: [{ email: userData.identifiant }, {userName: userData.identifiant}] });
@@ -36,7 +36,9 @@ class AuthService extends Repository<UserEntity> {
     const tokenData = this.createToken(findUser);
     const cookie = this.createCookie(tokenData);
 
-    return { cookie, findUser };
+    delete findUser.password;
+
+    return { cookie, findUser, tokenData };
   }
 
   public async logout(userData: User): Promise<User> {
